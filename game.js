@@ -1,7 +1,15 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-let ball = { x: 200, y: 200, radius: 5 };
+// Dynamisk justering af canvas dimensioner
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const mazeWidth = 20;
+const mazeHeight = 20;
+const cellSize = Math.min(canvas.width / mazeWidth, canvas.height / mazeHeight);
+
+let ball = { x: 1 * cellSize, y: 1 * cellSize, radius: cellSize / 4 };
 let maze = [];
 let holes = [];
 let goal = {};
@@ -11,8 +19,8 @@ function drawMaze() {
     ctx.fillStyle = 'black';
     maze.forEach(line => {
         ctx.beginPath();
-        ctx.moveTo(line.x1, line.y1);
-        ctx.lineTo(line.x2, line.y2);
+        ctx.moveTo(line.x1 * cellSize, line.y1 * cellSize);
+        ctx.lineTo(line.x2 * cellSize, line.y2 * cellSize);
         ctx.stroke();
     });
 }
@@ -21,7 +29,7 @@ function drawHoles() {
     ctx.fillStyle = 'black';
     holes.forEach(hole => {
         ctx.beginPath();
-        ctx.arc(hole.x, hole.y, hole.radius, 0, Math.PI * 2);
+        ctx.arc(hole.x * cellSize, hole.y * cellSize, hole.radius * cellSize, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
     });
@@ -30,7 +38,7 @@ function drawHoles() {
 function drawGoal() {
     ctx.fillStyle = 'green';
     ctx.beginPath();
-    ctx.arc(goal.x, goal.y, goal.radius, 0, Math.PI * 2);
+    ctx.arc(goal.x * cellSize, goal.y * cellSize, goal.radius * cellSize, 0, Math.PI * 2);
     ctx.fill();
     ctx.closePath();
 }
@@ -63,7 +71,7 @@ function handleOrientation(event) {
 function checkCollision() {
     // Tjek kollision med labyrintens vægge
     maze.forEach(line => {
-        if (ball.x > line.x1 && ball.x < line.x2 && ball.y > line.y1 && ball.y < line.y2) {
+        if (ball.x > line.x1 * cellSize && ball.x < line.x2 * cellSize && ball.y > line.y1 * cellSize && ball.y < line.y2 * cellSize) {
             ball.x -= gamma * 0.1;
             ball.y -= beta * 0.1;
         }
@@ -71,26 +79,26 @@ function checkCollision() {
 
     // Tjek kollision med huller
     holes.forEach(hole => {
-        let dx = ball.x - hole.x;
-        let dy = ball.y - hole.y;
+        let dx = ball.x - hole.x * cellSize;
+        let dy = ball.y - hole.y * cellSize;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < ball.radius + hole.radius) {
+        if (distance < ball.radius + hole.radius * cellSize) {
             alert('Du faldt i et hul! Prøv igen.');
-            ball.x = 200;
-            ball.y = 200;
+            ball.x = 1 * cellSize;
+            ball.y = 1 * cellSize;
         }
     });
 
     // Tjek om kuglen rammer målhullet
-    let dx = ball.x - goal.x;
-    let dy = ball.y - goal.y;
+    let dx = ball.x - goal.x * cellSize;
+    let dy = ball.y - goal.y * cellSize;
     let distance = Math.sqrt(dx * dx + dy * dy);
 
-    if (distance < ball.radius + goal.radius) {
+    if (distance < ball.radius + goal.radius * cellSize) {
         alert('Tillykke! Du har ramt målet.');
-        ball.x = 200;
-        ball.y = 200;
+        ball.x = 1 * cellSize;
+        ball.y = 1 * cellSize;
     }
 }
 
