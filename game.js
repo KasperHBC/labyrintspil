@@ -2,24 +2,9 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 let ball = { x: 200, y: 200, radius: 5 };
-let maze = [
-    // Labyrintens vægge som linjer
-    { x1: 50, y1: 50, x2: 350, y2: 50 },
-    { x1: 50, y1: 350, x2: 350, y2: 350 },
-    { x1: 50, y1: 50, x2: 50, y2: 350 },
-    { x1: 350, y1: 50, x2: 350, y2: 350 },
-    { x1: 100, y1: 50, x2: 100, y2: 300 },
-    { x1: 200, y1: 100, x2: 300, y2: 100 },
-    // Tilføj flere linjer for at lave en mere kompleks labyrint
-];
-
-let holes = [
-    { x: 150, y: 150, radius: 10 },
-    { x: 250, y: 250, radius: 10 },
-    // Tilføj flere huller
-];
-
-let goal = { x: 200, y: 200, radius: 15 };
+let maze = [];
+let holes = [];
+let goal = {};
 
 function drawMaze() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -121,4 +106,13 @@ if (window.DeviceOrientationEvent) {
     window.addEventListener('deviceorientation', handleOrientation);
 }
 
-updateGame();
+// Hent JSON-filen og initialiser spillet
+fetch('bane.json')
+    .then(response => response.json())
+    .then(data => {
+        maze = data.maze;
+        holes = data.holes;
+        goal = data.goal;
+        updateGame(); // Start spillet efter data er hentet
+    })
+    .catch(error => console.error('Error loading level data:', error));
