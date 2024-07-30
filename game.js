@@ -5,8 +5,8 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const mazeWidth = 20;
-const mazeHeight = 20;
+const mazeWidth = 20; // Bredde af maze i celler
+const mazeHeight = 20; // Højde af maze i celler
 const cellSize = Math.min(canvas.width / mazeWidth, canvas.height / mazeHeight);
 
 let ball = { x: 1 * cellSize, y: 1 * cellSize, radius: cellSize / 4 };
@@ -71,7 +71,12 @@ function handleOrientation(event) {
 function checkCollision() {
     // Tjek kollision med labyrintens vægge
     maze.forEach(line => {
-        if (ball.x > line.x1 * cellSize && ball.x < line.x2 * cellSize && ball.y > line.y1 * cellSize && ball.y < line.y2 * cellSize) {
+        let x1 = line.x1 * cellSize;
+        let y1 = line.y1 * cellSize;
+        let x2 = line.x2 * cellSize;
+        let y2 = line.y2 * cellSize;
+
+        if (ball.x > Math.min(x1, x2) && ball.x < Math.max(x1, x2) && ball.y > Math.min(y1, y2) && ball.y < Math.max(y1, y2)) {
             ball.x -= gamma * 0.1;
             ball.y -= beta * 0.1;
         }
